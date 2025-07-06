@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Royal Chess - Premium Chess Experience</title>
+    <meta name="description" content="Experience the ultimate chess game with beautiful design, intelligent AI, and smooth gameplay. Play against computer or friends locally." />
+    
+    <!-- CrazyGames SDK -->
+    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
+    <script>
+      // Initialize CrazyGames SDK when available
+      if (typeof window !== 'undefined') {
+        window.addEventListener('load', () => {
+          if (window.CrazyGames && window.CrazyGames.SDK) {
+            console.log('CrazyGames SDK loaded successfully');
+            // Initialize the SDK if init method exists
+            if (typeof window.CrazyGames.SDK.init === 'function') {
+              try {
+                window.CrazyGames.SDK.init();
+                console.log('CrazyGames SDK initialized');
+              } catch (error) {
+                console.warn('Failed to initialize CrazyGames SDK:', error);
+              }
+            }
+          } else {
+            console.warn('CrazyGames SDK not available - running in development mode');
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
