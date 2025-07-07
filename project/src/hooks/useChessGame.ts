@@ -4,6 +4,22 @@ import { ChessLogic } from '../utils/chessLogic';
 import { ChessBot } from '../utils/chessBot';
 import { AdManager } from '../utils/adManager';
 
+const moveSound = typeof window !== 'undefined' ? new Audio(require('../../ficha-de-ajedrez-34722.mp3')) : null;
+if (moveSound) moveSound.volume = 0.5; // Louder than background
+
+const bgMusic = typeof window !== 'undefined' ? new Audio(require('../../snowy-peaks-270901.mp3')) : null;
+if (bgMusic) {
+  bgMusic.loop = true;
+  bgMusic.volume = 0.15; // Softer background
+  // Start background music if not already playing
+  if (bgMusic.paused) {
+    bgMusic.play().catch(() => {});
+  }
+}
+
+const gameOverSound = typeof window !== 'undefined' ? new Audio(require('../../game-over-deep-male-voice-clip-352695.mp3')) : null;
+if (gameOverSound) gameOverSound.volume = 0.7;
+
 export const useChessGame = () => {
   const [gameState, setGameState] = useState<GameState>(ChessLogic.createInitialState());
   const [gameConfig, setGameConfig] = useState<GameConfig>({
@@ -51,6 +67,16 @@ export const useChessGame = () => {
       setShowCheckNotification(false);
     }
   }, [gameState.gameStatus, gameState.currentPlayer]);
+
+  // Play checkmate sound when gameStatus changes to 'checkmate'
+  useEffect(() => {
+    if (gameState.gameStatus === 'checkmate') {
+      if (gameOverSound) {
+        gameOverSound.currentTime = 0;
+        gameOverSound.play().catch(() => {});
+      }
+    }
+  }, [gameState.gameStatus]);
 
   // Handle bot moves
   useEffect(() => {
@@ -261,6 +287,8 @@ export const useChessGame = () => {
             selectedSquare: null,
             validMoves: [],
           });
+          if (moveSound) { moveSound.currentTime = 0; moveSound.play(); }
+          if (bgMusic && bgMusic.paused) { bgMusic.play().catch(() => {}); }
         }
         return;
       }
@@ -310,6 +338,8 @@ export const useChessGame = () => {
         selectedSquare: null,
         validMoves: [],
       });
+      if (moveSound) { moveSound.currentTime = 0; moveSound.play(); }
+      if (bgMusic && bgMusic.paused) { bgMusic.play().catch(() => {}); }
     }
   }, [gameState, gameConfig, suggestedMoves]);
 
