@@ -63,78 +63,83 @@ function App() {
     gameState.currentPlayer === (gameConfig.mode === 'human-vs-bot' ? gameConfig.playerColor : gameState.currentPlayer);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Chess Board with Action Bulbs */}
-          <div className="xl:col-span-2 flex items-center justify-center relative">
-            <div className="relative">
-              <ChessBoard
-                board={gameState.board}
-                selectedSquare={gameState.selectedSquare}
-                validMoves={gameState.validMoves}
-                lastMove={gameState.lastMove}
-                suggestedMoves={suggestedMoves}
-                onSquareClick={handleSquareClick}
-                onPieceMove={handlePieceMove}
+    <>
+      {/* Background Music */}
+      <audio src={require('../snowy-peaks-270901.mp3')} autoPlay loop volume={0.15} style={{ display: 'none' }} />
+      {/* Main App Content */}
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            {/* Chess Board with Action Bulbs */}
+            <div className="xl:col-span-2 flex items-center justify-center relative">
+              <div className="relative">
+                <ChessBoard
+                  board={gameState.board}
+                  selectedSquare={gameState.selectedSquare}
+                  validMoves={gameState.validMoves}
+                  lastMove={gameState.lastMove}
+                  suggestedMoves={suggestedMoves}
+                  onSquareClick={handleSquareClick}
+                  onPieceMove={handlePieceMove}
+                  isRotated={isRotated}
+                />
+                
+                {/* Undo Bulb (Left side) */}
+                <UndoBulb
+                  onRequestUndo={undoMove}
+                  hasUsedFreeUndo={hasUsedFreeUndo}
+                  isVisible={!isLoadingAd}
+                  canUndo={canUndo}
+                />
+                
+                {/* Suggestion Bulb (Right side) */}
+                <SuggestionBulb
+                  onRequestSuggestions={requestSuggestions}
+                  hasUsedFreeSuggestion={hasUsedFreeSuggestion}
+                  isVisible={showSuggestionBulb && !isLoadingAd}
+                />
+                
+                {/* Loading indicator for ads */}
+                {isLoadingAd && (
+                  <div className="absolute -right-16 top-1/2 transform -translate-y-1/2">
+                    <div className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full shadow-2xl">
+                      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Game Info Panel */}
+            <div className="xl:col-span-1">
+              <GameInfo
+                gameState={gameState}
+                gameConfig={gameConfig}
+                onNewGame={resetGame}
+                onRotateBoard={rotateBoard}
                 isRotated={isRotated}
               />
-              
-              {/* Undo Bulb (Left side) */}
-              <UndoBulb
-                onRequestUndo={undoMove}
-                hasUsedFreeUndo={hasUsedFreeUndo}
-                isVisible={!isLoadingAd}
-                canUndo={canUndo}
-              />
-              
-              {/* Suggestion Bulb (Right side) */}
-              <SuggestionBulb
-                onRequestSuggestions={requestSuggestions}
-                hasUsedFreeSuggestion={hasUsedFreeSuggestion}
-                isVisible={showSuggestionBulb && !isLoadingAd}
-              />
-              
-              {/* Loading indicator for ads */}
-              {isLoadingAd && (
-                <div className="absolute -right-16 top-1/2 transform -translate-y-1/2">
-                  <div className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full shadow-2xl">
-                    <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
-          
-          {/* Game Info Panel */}
-          <div className="xl:col-span-1">
-            <GameInfo
-              gameState={gameState}
-              gameConfig={gameConfig}
-              onNewGame={resetGame}
-              onRotateBoard={rotateBoard}
-              isRotated={isRotated}
-            />
-          </div>
+        </div>
+        
+        {/* Volume Control */}
+        <VolumeControl className="fixed bottom-6 right-6" />
+        
+        {/* Check Notification */}
+        <CheckNotification
+          isVisible={showCheckNotification}
+          playerInCheck={playerInCheck}
+          onClose={closeCheckNotification}
+        />
+        
+        {/* Background decoration */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-amber-900/5 to-transparent" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-blue-900/5 to-transparent" />
         </div>
       </div>
-      
-      {/* Volume Control */}
-      <VolumeControl className="fixed bottom-6 right-6" />
-      
-      {/* Check Notification */}
-      <CheckNotification
-        isVisible={showCheckNotification}
-        playerInCheck={playerInCheck}
-        onClose={closeCheckNotification}
-      />
-      
-      {/* Background decoration */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-amber-900/5 to-transparent" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-blue-900/5 to-transparent" />
-      </div>
-    </div>
+    </>
   );
 }
 
